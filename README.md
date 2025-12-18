@@ -11,7 +11,6 @@ manual recursive directory traversal, without relying on external tools.
 
 ## Usage
 Make the script executable (if not already):
-```bash
-chmod +x SLCheck.sh
+  chmod +x SLCheck.sh
 
 #### **Created by Ania Pricop.**
