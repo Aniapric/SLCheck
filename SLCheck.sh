@@ -21,26 +21,25 @@ if [ ! -d "$TARGET_DIR" ]; then
     exit 1
 fi
 
-shopt -s nullglob
-
 declare -A VISITED_INODES
 
 process_directory() {
-    local current_dir="$1"
-
-      local dir_id=$(stat -c "%d:%i" "$current_dir" 2>/dev/null)
-       if [[ -n "${VISITED_INODES[$dir_id]}" ]]; 
-      then echo "[INFO] Ciclu detectat sau director deja vizitat: $current_dir (Sarit)"
-       return
-       fi
-       VISITED_INODES[$dir_id]=1
-
-    if [ ! -r "$current_dir" ] || [ ! -x "$current_dir" ]; then
+     local current_dir="$1"
+    
+     if [ ! -r "$current_dir" ] || [ ! -x "$current_dir" ]; then
         echo "Avertisment: Nu pot accesa directorul $current_dir"
         return
-    fi
+     fi
+     
+     local dir_id=$(stat -c "%d:%i" "$current_dir")
+     
+     if [ -n "${VISITED_INODES[$dir_id]}" ]; 
+       then echo "[INFO] Ciclu detectat sau director deja vizitat: $current_dir (Sarit)"
+       return
+     fi
+     VISITED_INODES[$dir_id]=1
 
-    for entry in "$current_dir"/*; do
+     for entry in "$current_dir"/*; do
 
         if [ -L "$entry" ]; then
 
@@ -57,7 +56,7 @@ process_directory() {
             process_directory "$entry"
         fi
 
-    done
+     done
 }
 
 echo "Analizez directorul: $TARGET_DIR"
